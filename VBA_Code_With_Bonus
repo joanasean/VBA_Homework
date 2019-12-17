@@ -1,0 +1,58 @@
+Sub loopthru()
+
+    Dim tickersymbol As String
+    Dim yearlychange As Double
+    Dim percentagechange As Double
+    Dim volume As Double
+    
+    Dim ws As Worksheet
+
+    For Each ws In ThisWorkbook.Sheets
+        ws.Cells(1, 9).Value = "Ticker"
+        ws.Cells(1, 10).Value = "Yearly Change"
+        ws.Cells(1, 11).Value = "Percentage Change"
+        ws.Cells(1, 12).Value = "Volume"
+        
+        For i = 2 To ws.Cells(Rows.Count, 1).End(xlUp).Row
+            tickersymbol = ws.Cells(i, 1).Value
+            ws.Cells(i, 9) = tickersymbol
+            
+            yearlychange = ws.Cells(i, 6).Value - ws.Cells(i, 3).Value
+            ws.Cells(i, 10) = yearlychange
+            
+            percentagechange = Round((yearlychange / ws.Cells(i, 3).Value) * 100, 3)
+            ws.Cells(i, 11) = percentagechange
+            
+            ' Color Conditionals if Negative/Positive Percentage Change for the year
+            
+            If percentagechange < 0 Then
+                ws.Cells(i, 11).Interior.Color = vbRed
+            Else
+                ws.Cells(i, 11).Interior.Color = vbGreen
+            End If
+            
+            volume = ws.Cells(i, 7).Value
+            ws.Cells(i, 12).Value = volume
+        
+        Next i
+        
+        ' Greatest Percent Decrease
+        ws.Cells(1, 14).Value = "Great  % Decrease"
+        ws.Cells(2, 14).Value = Application.WorksheetFunction.Min(ws.Range(ws.Cells(2, 11), ws.Cells(ws.Cells(Rows.Count, 11).End(xlUp).Row, 11)))
+        
+        ' Greatest Percent Increase
+        
+        ws.Cells(1, 15).Value = "Great  % Increase"
+        ws.Cells(2, 15).Value = Application.WorksheetFunction.Max(ws.Range(ws.Cells(2, 11), ws.Cells(ws.Cells(Rows.Count, 11).End(xlUp).Row, 11)))
+        
+        ' Greatest Total Volume
+        
+        ws.Cells(1, 16).Value = "Great Total Volume"
+        ws.Cells(2, 16).Value = Application.WorksheetFunction.Max(ws.Range(ws.Cells(2, 12), ws.Cells(ws.Cells(Rows.Count, 12).End(xlUp).Row, 12)))
+        
+        
+        MsgBox ws.Name
+        
+    Next ws
+     
+End Sub
